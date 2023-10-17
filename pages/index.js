@@ -1,7 +1,8 @@
 import Head from 'next/head'
+import Banner from '@/components/banner/banner'
+import NavBar from '@/components/navbar/navbar'
 // import Image from 'next/image'
 // import styles from '@/styles/Home.module.css'
-
 
 export default function Home() {
   return (
@@ -14,7 +15,13 @@ export default function Home() {
       </Head>
       
       <div>
-        <h1>Nextflix</h1>
+        <NavBar username='Drew' />
+        <Banner 
+          title='Clifford the Big Red Dog' 
+          subTitle='subtitle' 
+          imgUrl='/static/clifford.webp' 
+        />
+
       </div>
     </>
   )
