@@ -1,10 +1,19 @@
 import Head from 'next/head'
-import Banner from '@/components/banner/banner'
 import NavBar from '@/components/navbar/navbar'
-// import Image from 'next/image'
-// import styles from '@/styles/Home.module.css'
+import Banner from '@/components/banner/banner'
+import SectionCards from '@/components/card/section-cards'
+import styles from '@/styles/Home.module.css'
 
 export default function Home() {
+  const disneyVideos = [
+    { imgUrl: '/static/clifford.webp' },
+    { imgUrl: '/static/clifford.webp' },
+    { imgUrl: '/static/clifford.webp' },
+    { imgUrl: '/static/clifford.webp' },
+    { imgUrl: '/static/clifford.webp' },
+    { imgUrl: '/static/clifford.webp' }
+  ]
+
   return (
     <>
       <Head>
@@ -22,6 +31,11 @@ export default function Home() {
           imgUrl='/static/clifford.webp' 
         />
 
+        <div className={styles.sectionWrapper}>
+          <SectionCards title="Disney Large" videos={disneyVideos} size="large" />
+          <SectionCards title="Disney Medium" videos={disneyVideos} size="medium" />
+          <SectionCards title="Disney Small" videos={disneyVideos} size="small" />
+        </div>
       </div>
     </>
   )
