@@ -2,18 +2,20 @@ import Head from 'next/head'
 import NavBar from '@/components/navbar/navbar'
 import Banner from '@/components/banner/banner'
 import SectionCards from '@/components/card/section-cards'
+import { getVideos } from '@/lib/videos'
 import styles from '@/styles/Home.module.css'
 
-export default function Home() {
-  const disneyVideos = [
-    { imgUrl: '/static/clifford.webp' },
-    { imgUrl: '/static/clifford.webp' },
-    { imgUrl: '/static/clifford.webp' },
-    { imgUrl: '/static/clifford.webp' },
-    { imgUrl: '/static/clifford.webp' },
-    { imgUrl: '/static/clifford.webp' }
-  ]
 
+// This gets called on every request
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const disneyVideos = await getVideos()
+  // Pass data to the page via props
+  return { props: { disneyVideos } }
+}
+
+
+export default function Home({ disneyVideos }) {
   return (
     <>
       <Head>
