@@ -13,13 +13,29 @@ export async function getServerSideProps() {
   const travelVideos = await getVideos('travel')
   const productivityVideos = await getVideos('productivity')
   const popularVideos = await getPopularVideos()
+
+  let error = false
+  let errorMessage = ''
+
+  if(
+    disneyVideos.error || 
+    travelVideos.error || 
+    productivityVideos.error || 
+    popularVideos.error
+  ){
+    error = true
+    errorMessage = disneyVideos.errorMsg
+  }
+
   // Pass data to the page via props
   return { 
     props: { 
-      disneyVideos, 
-      travelVideos, 
-      productivityVideos, 
-      popularVideos 
+      disneyVideos: disneyVideos.data, 
+      travelVideos: travelVideos.data, 
+      productivityVideos: productivityVideos.data, 
+      popularVideos: popularVideos.data,
+      error,
+      errorMessage
     } 
   }
 }
@@ -29,7 +45,9 @@ export default function Home({
   disneyVideos, 
   travelVideos, 
   productivityVideos, 
-  popularVideos 
+  popularVideos,
+  error,
+  errorMessage
 }) {
   return (
     <>
@@ -49,10 +67,16 @@ export default function Home({
         />
 
         <div className={styles.sectionWrapper}>
-          <SectionCards title="Disney" videos={disneyVideos} size="large" />
-          <SectionCards title="Travel" videos={travelVideos} size="small" />
-          <SectionCards title="Productivity" videos={productivityVideos} size="medium" />
-          <SectionCards title="Popular" videos={popularVideos} size="small" />
+          {error ?
+            <p style={{textAlign: 'center'}}>{errorMessage}</p>
+            :
+            <>
+              <SectionCards title="Disney" videos={disneyVideos} size="large" />
+              <SectionCards title="Travel" videos={travelVideos} size="small" />
+              <SectionCards title="Productivity" videos={productivityVideos} size="medium" />
+              <SectionCards title="Popular" videos={popularVideos} size="small" />
+            </>
+            }
         </div>
       </div>
     </>
