@@ -1,6 +1,7 @@
 # Nextflix
 
 Netflix clone of sorts using the Youtube API, created with Next.js. 
+Passwordless signin via Magic Link.
 
 ## Getting Started
 
@@ -21,4 +22,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Environment Variables
-YOUTUBE_API_KEY
+``` 
+NEXT_PUBLIC_MAGIC_PUBLISHABLE_API_KEY
+MAGIC_SECRET
+YOUTUBE_API_KEY 
+``````

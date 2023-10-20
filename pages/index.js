@@ -1,10 +1,8 @@
 import Head from 'next/head'
-import NavBar from '@/components/navbar/navbar'
 import Banner from '@/components/banner/banner'
 import SectionCards from '@/components/card/section-cards'
 import { getPopularVideos, getVideos } from '@/lib/videos'
 import styles from '@/styles/Home.module.css'
-
 
 // This gets called on every request
 export async function getServerSideProps() {
@@ -49,6 +47,7 @@ export default function Home({
   error,
   errorMessage
 }) {
+
   return (
     <>
       <Head>
@@ -58,8 +57,7 @@ export default function Home({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      <div className={styles.main}>
-        <NavBar username='Drew' />
+      <main className={styles.main}>
         <Banner 
           title='Clifford the Big Red Dog' 
           subTitle='subtitle' 
@@ -78,7 +76,7 @@ export default function Home({
             </>
             }
         </div>
-      </div>
+      </main>
     </>
   )
 }
