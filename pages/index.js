@@ -59,6 +59,7 @@ export default function Home({
       
       <main className={styles.main}>
         <Banner 
+          videoId="4zH5iYM4wJo"
           title='Clifford the Big Red Dog' 
           subTitle='subtitle' 
           imgUrl='/static/clifford.webp' 

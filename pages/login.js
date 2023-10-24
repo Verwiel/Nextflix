@@ -89,7 +89,7 @@ const Login = () => {
           />
 
           <p className={styles.userMsg}>{userMsg}</p>
-          <button type='submit' className={styles.loginBtn}>
+          <button name='login-submit' type='submit' className={styles.loginBtn}>
             {isLoading ? "Loading..." : "Sign In"}
           </button>
         </form>

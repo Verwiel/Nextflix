@@ -20,13 +20,12 @@ export default function App({ Component, pageProps }) {
     magic.user.isLoggedIn().then((isLoggedIn) => {
       if (isLoggedIn) {
         magic.user.getInfo().then((userData) => setUser(userData))
-        router.push('/')
+        // router.push('/')
       } else {
         router.push('/login')
         setUser({ user: null })
       }
     })
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
