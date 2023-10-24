@@ -1,40 +1,22 @@
-import { useState, useEffect } from "react"
+import { useState, useContext } from "react"
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { magic } from "../../lib/magic-client"
+import { UserContext } from '@/lib/UserContext'
 import styles from './navbar.module.css'
 
 const NavBar = () => {
+  const [user, setUser] = useContext(UserContext)
   const [showDropdown, setShowDropdown] = useState(false)
-  const [username, setUsername] = useState("")
-
   const router = useRouter()
 
-  useEffect(() => {
-    async function getUsername() {
-      try {
-        const { email } = await magic.user.getInfo()
-        if (email) {
-          setUsername(email)
-        }
-      } catch (error) {
-        console.log("Error retrieving email:", error)
-      }
-    }
-    getUsername()
-  }, [])
-
-  const handleSignout = async (e) => {
-    e.preventDefault()
-
-    try {
-      await magic.user.logout()
-      router.push("/login")
-    } catch (error) {
-      console.error("Error logging out", error)
-      router.push("/login")
-    }
+  const logout = () => {
+    // Call Magic's logout method, reset the user state, and route to the login page
+    magic.user.logout().then(() => {
+      setUser({ user: null })
+      router.push('/login')
+    })
   }
 
   const handleToggleDropdown = (e) => {
@@ -56,7 +38,7 @@ const NavBar = () => {
           </div>
         </Link>
 
-        {username.length > 0 && <>
+        {user?.issuer && (<>
           <ul className={styles.navItems}>
             <li className={styles.navItem}>
               <Link href="/">Home</Link>
@@ -68,7 +50,7 @@ const NavBar = () => {
           <nav className={styles.navContainer}>
             <div>
               <button className={styles.usernameBtn} onClick={handleToggleDropdown}>
-                <p className={styles.username}>{username}</p>
+                <p className={styles.username}>{user.email}</p>
                 <Image
                   src="/static/expand_more.svg"
                   alt="Expand more"
@@ -80,14 +62,14 @@ const NavBar = () => {
               {showDropdown && (
                 <div className={styles.navDropdown}>
                   <div>
-                    <Link href="/login" className={styles.linkName} onClick={handleSignout}>Sign out</Link>
+                    <Link href="/login" className={styles.linkName} onClick={logout}>Sign out</Link>
                     <div className={styles.lineWrapper}></div>
                   </div>
                 </div>
               )}
             </div>
           </nav>
-        </> }
+        </> )}
       </div>
     </header>
   )

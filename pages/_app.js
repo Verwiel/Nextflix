@@ -2,49 +2,43 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { Roboto_Slab } from 'next/font/google'
 import { magic } from "../lib/magic-client"
+import { UserContext } from '@/lib/UserContext'
 import NavBar from "@/components/navbar/navbar"
 import Loading from "@/components/loading/loading"
-import "../styles/globals.css"
+import "@/styles/globals.css"
 
 const roboto_slab = Roboto_Slab({ subsets: ['latin'] })
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState()
 
   useEffect(() => {
-    const handleLoggedIn = async () => {
-      const isLoggedIn = await magic.user.isLoggedIn()
+    // Set loading to true to display our loading message within pages/index.js
+    setUser({ loading: true })
+    // Check if the user is authenticated already
+    magic.user.isLoggedIn().then((isLoggedIn) => {
       if (isLoggedIn) {
-        // route to /
-        router.push("/")
+        magic.user.getInfo().then((userData) => setUser(userData))
+        router.push('/')
       } else {
-        // route to /login
-        router.push("/login")
+        router.push('/login')
+        setUser({ user: null })
       }
-    }
-    handleLoggedIn()
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    const handleComplete = () => {
-      setIsLoading(false)
-    }
-    router.events.on("routeChangeComplete", handleComplete)
-    router.events.on("routeChangeError", handleComplete)
 
-    return () => {
-      router.events.off("routeChangeComplete", handleComplete)
-      router.events.off("routeChangeError", handleComplete)
-    }
-  }, [router])
-
-  return isLoading ? (
+  return user?.loading ? (
     <Loading />
   ) : (
     <div className={roboto_slab.className}>
-      <NavBar />
-      <Component {...pageProps} />
+      <UserContext.Provider value={[user, setUser]}>
+        <NavBar />
+        <Component {...pageProps} />
+      </UserContext.Provider>
     </div>
   )
 }
