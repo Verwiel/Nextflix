@@ -40,9 +40,7 @@ const Login = () => {
     setIsLoading(true)
 
     try {
-      const didToken = await magic.auth.loginWithMagicLink({
-        email,
-      })
+      const didToken = await magic.auth.loginWithMagicLink({ email })
 
       // Send this token to our validation endpoint
       const res = await fetch('/api/login', {
