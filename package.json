@@ -12,6 +12,7 @@
     "@magic-sdk/admin": "^2.0.1",
     "cookie": "^0.5.0",
     "framer-motion": "^10.16.4",
+    "jose": "^5.0.1",
     "jsonwebtoken": "^9.0.2",
     "magic-sdk": "^21.1.1",
     "next": "13.5.5",

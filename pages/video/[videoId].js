@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import Modal from "react-modal"
 import { getYoutubeVideoById } from "../../lib/videos"
@@ -32,6 +32,8 @@ export async function getStaticPaths() {
 
 const Video = ({ video }) => {
   const router = useRouter()
+  const videoId = router.query.videoId
+  
   const [toggleLike, setToggleLike] = useState(false)
   const [toggleDislike, setToggleDislike] = useState(false)
 
@@ -43,14 +45,52 @@ const Video = ({ video }) => {
     statistics: { viewCount } = { viewCount: 0 },
   } = video
 
+  useEffect(() => {
+    const handleLikeDislikeService = async () => {
+      const response = await fetch(`/api/stats?videoId=${videoId}`, {
+        method: "GET",
+      })
+      const data = await response.json()
+
+      if (data.length > 0) {
+        const favorited = data[0].favorited
+        if (favorited === 1) {
+          setToggleLike(true)
+        } else if (favorited === 0) {
+          setToggleDislike(true)
+        }
+      }
+    }
+    handleLikeDislikeService()
+  }, [videoId])
+
+  const runRatingService = async (favorited) => {
+    return await fetch("/api/stats", {
+      method: "POST",
+      body: JSON.stringify({
+        videoId,
+        favorited,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  }
+
   const handleToggleDislike = async () => {
     setToggleDislike(!toggleDislike)
     setToggleLike(toggleDislike)
+    const val = !toggleDislike
+    const favorited = val ? 0 : 1
+    const response = await runRatingService(favorited)
   }
 
   const handleToggleLike = async () => {
-    setToggleLike(!toggleLike)
+    const val = !toggleLike
+    setToggleLike(val)
     setToggleDislike(toggleLike)
+    const favorited = val ? 1 : 0
+    const response = await runRatingService(favorited)
   }
 
   return (
