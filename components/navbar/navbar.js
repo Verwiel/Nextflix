@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState, useEffect, useContext } from "react"
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -9,14 +9,41 @@ import styles from './navbar.module.css'
 const NavBar = () => {
   const [user, setUser] = useContext(UserContext)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [didToken, setDidToken] = useState("")
   const router = useRouter()
 
-  const logout = () => {
-    // Call Magic's logout method, reset the user state, and route to the login page
-    magic.user.logout().then(() => {
+  useEffect(() => {
+    let noUser = !user?.user
+    if(!noUser){
+      async function getHasuraUser() {
+        try {
+          const didToken = await magic.user.getIdToken()
+          if (user.email) {
+            setDidToken(didToken)
+          }
+        } catch (error) {
+          console.log("Error retrieving hasura user:", error)
+        }
+      }
+      getHasuraUser()
+    }
+  }, [user])
+
+  const logout = async () => {
+    try {
       setUser({ user: null })
-      router.push('/login')
-    })
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${didToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      const res = await response.json()
+    } catch (error) {
+      console.error("Error logging out", error)
+      router.push("/login")
+    }
   }
 
   const handleToggleDropdown = (e) => {
@@ -53,7 +80,7 @@ const NavBar = () => {
                 <p className={styles.username}>{user.email}</p>
                 <Image
                   src="/static/expand_more.svg"
-                  alt="Expand more"
+                  alt="Expand dropdown"
                   width={24}
                   height={24}
                 />
