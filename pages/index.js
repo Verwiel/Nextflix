@@ -1,12 +1,15 @@
 import Head from 'next/head'
 import Banner from '@/components/banner/banner'
 import SectionCards from '@/components/card/section-cards'
-import { getPopularVideos, getVideos } from '@/lib/videos'
+import { getPopularVideos, getVideos, getWatchItAgainVideos } from '@/lib/videos'
+import { redirectUser } from "@/utils/redirectUser"
 import styles from '@/styles/Home.module.css'
 
 // This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
+export async function getServerSideProps(context) {
+  const { userId, token } = await redirectUser(context)
+  
+  const watchItAgainVideos = await getWatchItAgainVideos(userId, token)
   const disneyVideos = await getVideos('disney trailer')
   const travelVideos = await getVideos('travel')
   const productivityVideos = await getVideos('productivity')
@@ -32,6 +35,7 @@ export async function getServerSideProps() {
       travelVideos: travelVideos.data, 
       productivityVideos: productivityVideos.data, 
       popularVideos: popularVideos.data,
+      watchItAgainVideos,
       error,
       errorMessage
     } 
@@ -44,10 +48,10 @@ export default function Home({
   travelVideos, 
   productivityVideos, 
   popularVideos,
+  watchItAgainVideos,
   error,
   errorMessage
 }) {
-
   return (
     <>
       <Head>
@@ -70,10 +74,21 @@ export default function Home({
             <p style={{textAlign: 'center'}}>{errorMessage}</p>
             :
             <>
-              <SectionCards title="Disney" videos={disneyVideos} size="large" />
-              <SectionCards title="Travel" videos={travelVideos} size="small" />
-              <SectionCards title="Productivity" videos={productivityVideos} size="medium" />
-              <SectionCards title="Popular" videos={popularVideos} size="small" />
+              {disneyVideos.length &&
+                <SectionCards title="Disney" videos={disneyVideos} size="large" />
+              }
+              {watchItAgainVideos.length &&
+                <SectionCards title="Watch it again" videos={watchItAgainVideos} size="small" />
+              }
+              {travelVideos.length &&
+                <SectionCards title="Travel" videos={travelVideos} size="small" />
+              }
+              {productivityVideos.length &&
+                <SectionCards title="Productivity" videos={productivityVideos} size="medium" />
+              }
+              {popularVideos.length &&
+                <SectionCards title="Popular" videos={popularVideos} size="small" />
+              }
             </>
             }
         </div>
